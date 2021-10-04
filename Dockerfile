@@ -1,15 +1,5 @@
 FROM ubuntu:20.04 as ubuntu-base
 
-RUN apt-get update && apt-get install -y vim nano zsh curl git sudo
-
-# Install Oh my Zsh
-RUN bash -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-RUN sed -i -- 's/robbyrussell/sonicradish/g' /root/.zshrc 
-
-# Add none root user
-RUN  useradd zekryon && echo "zekryon:zekryon" | chpasswd && adduser zekryon sudo
-USER zekryon
-
 
 ENV DEBIAN_FRONTEND=noninteractive \
     DEBCONF_NONINTERACTIVE_SEEN=true
@@ -88,3 +78,12 @@ RUN apt-get update -qqy \
     && apt-get autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+RUN apt-get update && apt-get install -y vim nano zsh curl git sudo
+
+# Install Oh my Zsh
+RUN bash -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+RUN sed -i -- 's/robbyrussell/sonicradish/g' /root/.zshrc 
+
+# Add none root user
+RUN  useradd zekryon && echo "zekryon:zekryon" | chpasswd && adduser zekryon sudo
+USER zekryon
