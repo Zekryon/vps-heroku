@@ -3,8 +3,8 @@ FROM ubuntu:20.04 as ubuntu-base
 ENV DEBIAN_FRONTEND=noninteractive \
     DEBCONF_NONINTERACTIVE_SEEN=true
 
-RUN apt-get update && \
-      apt-get -y install sudo
+RUN sudo apt-get update && \
+      sudo apt-get -y install sudo
 
 RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
 
@@ -12,14 +12,14 @@ USER docker
 CMD /bin/bash
 
 
-RUN apt-get -qqy update \
-    && apt-get -qqy --no-install-recommends install \
+RUN sudo apt-get -qqy update \
+    && sudo apt-get -qqy --no-install-recommends install \
         sudo \
         supervisor \
         xvfb x11vnc novnc websockify \
-    && apt-get autoclean \
-    && apt-get autoremove \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+    && sudo apt-get autoclean \
+    && sudo apt-get autoremove \
+    && rm -rf /var/lib/sudo apt/lists/* /var/cache/sudo apt/*
 
 RUN cp /usr/share/novnc/vnc.html /usr/share/novnc/index.html
 
@@ -44,21 +44,21 @@ CMD ["/opt/bin/entry_point.sh"]
 #============================
 FROM ubuntu-base as ubuntu-utilities
 
-RUN apt-get -qqy update \
-    && apt-get -qqy --no-install-recommends install \
+RUN sudo apt-get -qqy update \
+    && sudo apt-get -qqy --no-install-recommends install \
         firefox htop terminator gnupg2 software-properties-common \
     && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    && apt install -qqy --no-install-recommends ./google-chrome-stable_current_amd64.deb \
-    && apt-add-repository ppa:remmina-ppa-team/remmina-next \
-    && apt update \
-    && apt install -qqy --no-install-recommends remmina remmina-plugin-rdp remmina-plugin-secret \
-    && apt-add-repository ppa:obsproject/obs-studio \
-    && apt update \
-    && apt install -qqy --no-install-recommends obs-studio \
-    && apt install unzip \
-    && apt-get autoclean \
-    && apt-get autoremove \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+    && sudo apt install -qqy --no-install-recommends ./google-chrome-stable_current_amd64.deb \
+    && sudo apt-add-repository ppa:remmina-ppa-team/remmina-next \
+    && sudo apt update \
+    && sudo apt install -qqy --no-install-recommends remmina remmina-plugin-rdp remmina-plugin-secret \
+    && sudo apt-add-repository ppa:obsproject/obs-studio \
+    && sudo apt update \
+    && sudo apt install -qqy --no-install-recommends obs-studio \
+    && sudo apt install unzip \
+    && sudo apt-get autoclean \
+    && sudo apt-get autoremove \
+    && rm -rf /var/lib/sudo apt/lists/* /var/cache/sudo apt/*
 
 # COPY conf.d/* /etc/supervisor/conf.d/
 
@@ -76,13 +76,13 @@ ENV SCREEN_WIDTH=1280 \
     DISPLAY_NUM=99 \
     UI_COMMAND=/usr/bin/startxfce4
 
-# RUN apt-get update -qqy \
-#     && apt-get -qqy install \
+# RUN sudo apt-get update -qqy \
+#     && sudo apt-get -qqy install \
 #         xserver-xorg xserver-xorg-video-fbdev xinit pciutils xinput xfonts-100dpi xfonts-75dpi xfonts-scalable kde-plasma-desktop
 
-RUN apt-get update -qqy \
-    && apt-get -qqy install --no-install-recommends \
+RUN sudo apt-get update -qqy \
+    && sudo apt-get -qqy install --no-install-recommends \
         dbus-x11 xfce4 \
-    && apt-get autoclean \
-    && apt-get autoremove \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+    && sudo apt-get autoclean \
+    && sudo apt-get autoremove \
+    && rm -rf /var/lib/sudo apt/lists/* /var/cache/sudo apt/*
