@@ -3,6 +3,15 @@ FROM ubuntu:20.04 as ubuntu-base
 ENV DEBIAN_FRONTEND=noninteractive \
     DEBCONF_NONINTERACTIVE_SEEN=true
 
+RUN apt-get update && \
+      apt-get -y install sudo
+
+RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
+
+USER docker
+CMD /bin/bash
+
+
 RUN apt-get -qqy update \
     && apt-get -qqy --no-install-recommends install \
         sudo \
@@ -77,3 +86,51 @@ RUN apt-get update -qqy \
     && apt-get autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+RUN add-apt-repository -y ppa:webupd8team/java
+    && apt-get -y install oracle-java8-installer
+    && apt-get update
+    && apt-get upgrade
+    && apt-get install build-essential libreadline-dev libssl-dev libpq5 libpq-dev libreadline5 libsqlite3-dev libpcap-dev git-core autoconf postgresql pgadmin3 curl zlib1g-dev libxml2-dev libxslt1-dev libyaml-dev curl zlib1g-dev gawk bison libffi-dev libgdbm-dev libncurses5-dev libtool sqlite3 libgmp-dev gnupg2 dirmngr
+    && cd ~
+    && git clone git://github.com/sstephenson/rbenv.git .rbenv
+    && echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+    && echo 'eval "$(rbenv init -)"' >> ~/.bashrc
+    && exec $SHELL
+    && 
+    && git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+    && echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
+    && 
+    && git clone git://github.com/dcarley/rbenv-sudo.git ~/.rbenv/plugins/rbenv-sudo
+    && 
+    && exec $SHELL
+    && 
+    && RUBYVERSION=$(wget https://raw.githubusercontent.com/rapid7/metasploit-framework/master/.ruby-version -q -O - )
+    && rbenv install $RUBYVERSION
+    && rbenv global $RUBYVERSION
+    && ruby -v
+    && mkdir ~/Development
+    && cd ~/Development
+    && git clone https://github.com/nmap/nmap.git
+    && cd nmap 
+    && ./configure
+    && make
+    && make install
+    && make clean
+    && cd /opt
+    && git clone https://github.com/rapid7/metasploit-framework.git
+    && chown -R `whoami` /opt/metasploit-framework
+    && cd metasploit-framework
+    && rvm --default use ruby-${RUBYVERSION}@metasploit-framework
+    && gem install bundler
+    && bundle install
+    && sudo bash -c 'for MSF in $(ls msf*); do ln -s /opt/metasploit-framework/$MSF /usr/local/bin/$MSF;done'
+    && echo "export PATH=$PATH:/usr/lib/postgresql/10/bin" >> ~/.bashrc
+    && . ~/.bashrc 
+    && usermod -a -G postgres `whoami`
+    && su - `whoami`
+    && cd /opt/metasploit-framework/
+    && ./msfdb init
+    
+    
+
+
