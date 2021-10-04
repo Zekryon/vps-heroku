@@ -1,13 +1,14 @@
 FROM ubuntu:20.04 as ubuntu-base
 
-RUN apk --no-cache update \
-    && apk --no-cache add sudo
-copy run.sh /usr/local/
-RUN addgroup -S zekryon && adduser -S zekryon -G zekryon
-RUN chown -R zekryon:zekryon /home/zekryon/
-RUN echo 'zekryon  ALL=(ALL) /bin/su' >>  /etc/sudoers
+RUN apt-get update && apt-get install -y vim nano zsh curl git sudo
+
+# Install Oh my Zsh
+RUN bash -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+RUN sed -i -- 's/robbyrussell/sonicradish/g' /root/.zshrc 
+
+# Add none root user
+RUN  useradd zekryon && echo "zekryon:zekryon" | chpasswd && adduser zekryon sudo
 USER zekryon
-ENTRYPOINT [ "sh","/usr/local/run.sh"]
 
 
 ENV DEBIAN_FRONTEND=noninteractive \
